@@ -1,90 +1,275 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>練習用ページ</title>
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>im@sparql Browser App (GitHub Pages)</title>
+  <style>
+    :root { --bg:#0b1020; --fg:#e7ecf3; --muted:#9bb0c3; --acc:#7aa2ff; --card:#121a2e; --line:#223154; }
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Noto Sans JP, sans-serif}
+    header{padding:24px 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0c1330,#0a1127)}
+    h1{margin:0;font-size:22px}
+    main{max-width:1100px;margin:24px auto;padding:0 16px;}
+    .grid{display:grid;grid-template-columns:1fr;gap:16px}
+    @media(min-width:900px){.grid{grid-template-columns:2fr 1fr}}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+    label{display:block;font-weight:600;margin-bottom:6px}
+    input[type="text"], textarea, select{width:100%;background:#0e1630;color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;outline:none}
+    textarea{min-height:220px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{appearance:none;border:1px solid var(--acc);background:transparent;color:var(--acc);padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700}
+    .btn:hover{background:rgba(122,162,255,.1)}
+    .btn.primary{background:var(--acc);color:#0b1020;border-color:var(--acc)}
+    .muted{color:var(--muted)}
+    table{width:100%;border-collapse:collapse}
+    thead{position:sticky;top:0;background:#0f1735}
+    th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+    .status{font-variant-numeric:tabular-nums}
+    .footer{margin-top:20px;color:var(--muted);font-size:12px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 0}
+    .chip{font-size:12px;padding:4px 8px;border-radius:999px;background:#0e1630;border:1px solid var(--line)}
+    .warn{color:#ffb86b}
+    .ok{color:#8be9a5}
+    .err{color:#ff7aa2}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#0e1630;border:1px solid var(--line);border-radius:6px;padding:0 6px}
+  </style>
 </head>
 <body>
   <header>
-    <div class="container">
-      <div class="header-left">
-        <img class="logo" src="https://prog-8.com/images/html/advanced/main_logo.png">
-      </div>
-      <span class="fa fa-bars menu-icon"></span>
-      <div class="header-right">
-        <a href="#">レッスン</a>
-        <a href="#">新規登録</a>
-        <a href="#" class="login">ログイン</a>
-      </div>
-    </div>
+    <h1>im@sparql × GitHub Pages — ブラウザだけで動く SPARQL ビューア</h1>
+    <div class="muted">ミリオンライブのプロフィール検索 → 表示／CSV ダウンロード対応</div>
   </header>
-  <div class="top-wrapper">
-    <div class="container">
-      <h1>LEARN TO CODE.<br>LEARN TO BE CREATIVE.</h1>
-      <p>Progateはオンラインプログラミング学習サービスです。<br>初心者にもやさしいスライドとレッスンで、ウェブサービスを作りながらプログラミングを学んでいきましょう。</p>
-      <div class="btn-wrapper">
-        <a href="#" class="btn signup">新規登録はこちら</a>
-        <p>or</p>
-        <a href="#" class="btn facebook"><span class="fa fa-facebook"></span>Facebookで登録</a>
-        <a href="#" class="btn twitter"><span class="fa fa-twitter"></span>Twitterで登録</a>
-      </div>
-    </div>
-  </div>
-  <div class="lesson-wrapper">
-    <div class="container">
-      <div class="heading">
-        <h2>Learn Where to Get Started!</h2>
-      </div>
-      <div class="lessons">
-        <div class="lesson">
-          <div class="lesson-icon">
-            <img src="https://prog-8.com/images/html/advanced/html.png">
-            <p>HTML & CSS</p>
+  <main>
+    <div class="grid">
+      <section class="card">
+        <div class="row">
+          <div style="flex:1 1 420px">
+            <label for="endpoint">SPARQL エンドポイント</label>
+            <input id="endpoint" type="text" value="https://sparql.crssnky.xyz/spql/imas/query" />
+            <div class="chips">
+              <span class="chip">GET 優先（長文は POST）</span>
+              <span class="chip">Accept: <span class="kbd">application/sparql-results+json</span></span>
+              <span class="chip">タイムアウト 30s / 自動リトライ</span>
+            </div>
           </div>
-          <p class="text-contents">ウェブページの作成に使用される言語です。HTMLとCSSを組み合わせることで、静的なページを作り上げることができます。</p>
-        </div>
-        <div class="lesson">
-          <div class="lesson-icon">
-            <img src="https://prog-8.com/images/html/advanced/jQuery.png">
-            <p>jQuery</p>
+          <div style="flex:1 1 260px">
+            <label for="brand">ブランド</label>
+            <select id="brand">
+              <option value="million" selected>Million (ミリオン)</option>
+              <option value="cinderella">Cinderella (デレ)</option>
+              <option value="shiny">Shiny Colors (シャニ)</option>
+              <option value="765">765AS</option>
+              <option value="sidem">SideM</option>
+            </select>
           </div>
-          <p class="text-contents">素敵な動きを手軽に実装できるJavaScriptライブラリです。 アニメーション効果をつけたり、Ajax（エイジャックス）を使って外部ファイルを読み込んだりと色々なことができます。</p>
         </div>
-        <div class="lesson">
-          <div class="lesson-icon">
-            <img src="https://prog-8.com/images/html/advanced/ruby.png">
-            <p>Ruby</p>
-          </div>
-          <p class="text-contents">オープンソースの動的なプログラミング言語で、 シンプルさと高い生産性を備えています。大きなWebアプリケーションから小さな日用ツールまで、さまざまなソフトウェアを作ることができます。</p>
+        <label for="query">SPARQL クエリ</label>
+        <textarea id="query"></textarea>
+        <div class="row" style="margin-top:8px">
+          <button id="run" class="btn primary">▶ 実行</button>
+          <button id="csv" class="btn">⬇ CSV ダウンロード</button>
+          <button id="reset" class="btn">↺ 例のクエリに戻す</button>
         </div>
-        <div class="lesson">
-          <div class="lesson-icon">
-            <img src="https://prog-8.com/images/html/advanced/php.png">
-            <p>PHP</p>
-          </div>
-          <p class="text-contents">HTMLだけではページの内容を変えることはできません。PHPはHTMLにプログラムを埋め込み、それを可能にします。</p>
+        <div class="footer">
+          <div class="muted">注意: 公開エンドポイントのため混雑時は <span class="kbd">503</span> が出ることがあります。短時間に連続実行しないでください。</div>
         </div>
-      </div>
-      <div class="clear"></div>
+      </section>
+
+      <section class="card">
+        <div class="row status">
+          <div>状態: <span id="status" class="muted">idle</span></div>
+        </div>
+        <div id="tips" class="muted" style="margin-top:8px"></div>
+        <hr style="border:0;border-top:1px solid var(--line);margin:12px 0" />
+        <div id="count" class="muted"></div>
+        <div style="overflow:auto;max-height:60vh">
+          <table id="table"></table>
+        </div>
+      </section>
     </div>
-  </div>
-  <div class="message-wrapper">
-    <div class="container">
-      <div class="heading">
-        <h2>さぁ、あなたもProgateでプログラミングを学んでみませんか?</h2>
-        <h3>Let's learn to code, learn to be creative!</h3>
-      </div>
-      <span class="btn message">さっそく開発する</span>
-    </div>
-  </div>
-  <footer>
-    <div class="container">
-      <img src="https://prog-8.com/images/html/advanced/footer_logo.png">
-      <p>Learn to Code, Learn to be Creative.</p>
-    </div>
-  </footer>
+
+    <section class="card">
+      <h2 style="margin:0 0 8px">CORS で失敗する場合</h2>
+      <p class="muted">
+        GitHub Pages のような静的サイトから別オリジンの SPARQL に直接アクセスするには、エンドポイント側で <span class="kbd">Access-Control-Allow-Origin</span> 等の CORS ヘッダが必要です。CORS エラー時はサーバ設定を待つか、Cloudflare Workers などの軽量プロキシを経由してください（利用規約と負荷に配慮）。
+      </p>
+      <details>
+        <summary>Cloudflare Workers プロキシ（最小例）</summary>
+        <pre><code>export default {
+  async fetch(req) {
+    if (req.method === 'OPTIONS') {
+      return new Response(null, {headers: corsHeaders()});
+    }
+    const endpoint = 'https://sparql.crssnky.xyz/spql/imas/query';
+    const url = new URL(req.url);
+    const query = url.searchParams.get('query') || await req.text();
+    const upstream = await fetch(endpoint + '?query=' + encodeURIComponent(query), {
+      method: 'GET', headers: { 'Accept': 'application/sparql-results+json' }
+    });
+    return new Response(upstream.body, {status: upstream.status, headers: corsHeaders({'Content-Type': 'application/sparql-results+json'})});
+  }
+}
+function corsHeaders(extra={}){
+  return Object.assign({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': '*'
+  }, extra);
+}
+</code></pre>
+        <div class="muted">※ エンドポイントの負荷に注意し、キャッシュの導入やレート制御を推奨。</div>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    const qs = (s, el=document) => el.querySelector(s);
+    const tableEl = qs('#table');
+    const statusEl = qs('#status');
+    const countEl = qs('#count');
+    const tipsEl = qs('#tips');
+    const textarea = qs('#query');
+    const endpointInput = qs('#endpoint');
+    const brandSel = qs('#brand');
+
+    function defaultQuery(brandKey){
+      const brandFilter = brandKey==='million' ? 'million'
+        : brandKey==='cinderella' ? 'cinderella'
+        : brandKey==='shiny' ? 'shiny'
+        : brandKey==='765' ? '765'
+        : brandKey==='sidem' ? 'sidem' : 'million';
+
+      return `PREFIX schema: <http://schema.org/>
+PREFIX imas:   <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
+SELECT ?name ?kana ?birthDate ?constellation ?height ?weight ?bust ?waist ?hip ?blood ?birthPlace WHERE {
+  ?s imas:Brand ?brand .
+  FILTER(CONTAINS(LCASE(STR(?brand)), "${brandFilter}"))
+  ?s (schema:name|schema:alternateName) ?name .
+  FILTER(LANG(?name) = "ja")
+  OPTIONAL { ?s imas:nameKana ?kana }
+  OPTIONAL { ?s schema:birthDate ?birthDate }
+  OPTIONAL { ?s imas:Constellation ?constellation }
+  OPTIONAL { ?s schema:height ?height }
+  OPTIONAL { ?s schema:weight ?weight }
+  OPTIONAL { ?s imas:Bust ?bust }
+  OPTIONAL { ?s imas:Waist ?waist }
+  OPTIONAL { ?s imas:Hip ?hip }
+  OPTIONAL { ?s imas:BloodType ?blood }
+  OPTIONAL { ?s schema:birthPlace ?birthPlace }
+}
+ORDER BY ?kana ?name`;
+    }
+
+    function setExample(){ textarea.value = defaultQuery(brandSel.value); }
+    setExample();
+
+    brandSel.addEventListener('change', setExample);
+    qs('#reset').addEventListener('click', setExample);
+    qs('#run').addEventListener('click', runQuery);
+    qs('#csv').addEventListener('click', downloadCSV);
+
+    async function runQuery(){
+      clearTable();
+      const endpoint = endpointInput.value.trim();
+      const query = textarea.value.trim();
+      if(!endpoint || !query){ return; }
+      tipsEl.textContent = '';
+      status('実行中…');
+      try{
+        const json = await queryWithRetry(endpoint, query);
+        const rows = parseSparqlJSON(json);
+        renderTable(rows);
+        countEl.textContent = `${rows.length} 件`;
+        status('OK', 'ok');
+      }catch(err){
+        status('失敗', 'err');
+        console.error(err);
+        countEl.textContent = '';
+        const msg = String(err && err.message || err);
+        const hint = msg.includes('Failed to fetch') || msg.includes('CORS') || msg.includes('TypeError')
+          ? 'ブラウザからのクロスオリジン要求がブロックされた可能性があります（CORS）。Cloudflare Workers 等のプロキシ経由をご検討ください。'
+          : 'エンドポイントの負荷や一時的な障害（503/429など）の可能性があります。少し間隔を空けて再試行してください。';
+        tipsEl.innerHTML = `<span class="warn">${escapeHTML(msg)}</span><br>${hint}`;
+      }
+    }
+
+    async function queryWithRetry(endpoint, query){
+      const useGet = query.length < 1800; // URL長の目安
+      let attempt = 0, delay = 800;
+      while(true){
+        attempt++;
+        try{
+          const controller = new AbortController();
+          const t = setTimeout(() => controller.abort(), 30000);
+          const res = await (useGet ? fetch(endpoint + '?query=' + encodeURIComponent(query), {
+            method: 'GET', mode: 'cors', headers: { 'Accept': 'application/sparql-results+json' }, signal: controller.signal
+          }) : fetch(endpoint, {
+            method: 'POST', mode: 'cors', headers: { 'Accept': 'application/sparql-results+json', 'Content-Type': 'application/sparql-query' },
+            body: query, signal: controller.signal
+          }));
+          clearTimeout(t);
+          if(res.ok){ return await res.json(); }
+          if(res.status === 503 || res.status === 429){ throw new Error('Server busy: ' + res.status); }
+          const text = await res.text();
+          throw new Error(`HTTP ${res.status}: ${text.slice(0,200)}`);
+        }catch(e){
+          if(attempt >= 5) throw e;
+          await sleep(delay + Math.random()*300);
+          delay *= 1.6;
+        }
+      }
+    }
+
+    function parseSparqlJSON(json){
+      // SPARQL 1.1 Results JSON に準拠
+      const head = json.head && json.head.vars || [];
+      const rows = json.results && json.results.bindings || [];
+      return rows.map(b => Object.fromEntries(head.map(v => [v, bindingToStr(b[v])])));
+    }
+
+    function bindingToStr(x){
+      if(!x) return '';
+      if(x.type === 'uri') return x.value;
+      if(x.type === 'bnode') return '_:'+x.value;
+      // literal or typed-literal
+      return x.value;
+    }
+
+    function renderTable(rows){
+      if(!rows.length){ tableEl.innerHTML = '<thead><tr><th>結果なし</th></tr></thead>'; return; }
+      const cols = Object.keys(rows[0]);
+      const thead = '<thead><tr>' + cols.map(c=>`<th>${escapeHTML(c)}</th>`).join('') + '</tr></thead>';
+      const tbody = '<tbody>' + rows.map(r=>'<tr>'+cols.map(c=>`<td>${escapeHTML(r[c] ?? '')}</td>`).join('')+'</tr>').join('') + '</tbody>';
+      tableEl.innerHTML = thead + tbody;
+      tableEl.dataset.cols = JSON.stringify(cols);
+      tableEl.dataset.rows = JSON.stringify(rows);
+    }
+
+    function clearTable(){ tableEl.innerHTML=''; }
+
+    function downloadCSV(){
+      const cols = JSON.parse(tableEl.dataset.cols || '[]');
+      const rows = JSON.parse(tableEl.dataset.rows || '[]');
+      if(!cols.length){ alert('まずクエリを実行してください'); return; }
+      const csv = [cols.join(',')].concat(rows.map(r => cols.map(c => csvCell(r[c])).join(','))).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'imasparql_result.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+    }
+
+    const csvCell = (v) => {
+      const s = (v==null? '' : String(v));
+      return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+    }
+
+    const escapeHTML = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+    const sleep = (ms) => new Promise(r=>setTimeout(r,ms));
+
+  </script>
 </body>
 </html>
+
